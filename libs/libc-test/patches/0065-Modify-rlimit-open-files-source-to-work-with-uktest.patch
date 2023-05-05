@@ -1,0 +1,59 @@
+From 0b4ced3407698e105cdf1fa75f33372a87541682 Mon Sep 17 00:00:00 2001
+From: Florin Postolache <florin.postolache80@gmail.com>
+Date: Tue, 15 Nov 2022 16:40:48 +0200
+Subject: [PATCH] Modify rlimit-open-files source to work with uktest
+
+Signed-off-by: Florin Postolache <florin.postolache80@gmail.com>
+---
+ src/regression/rlimit-open-files.c | 26 ++++++++++++--------------
+ 1 file changed, 12 insertions(+), 14 deletions(-)
+
+diff --git a/src/regression/rlimit-open-files.c b/src/regression/rlimit-open-files.c
+index 192ac35..d44c5ab 100644
+--- a/src/regression/rlimit-open-files.c
++++ b/src/regression/rlimit-open-files.c
+@@ -4,9 +4,9 @@
+ #include <errno.h>
+ #include <unistd.h>
+ #include <sys/resource.h>
+-#include "test.h"
++#include <uk/test.h>
+ 
+-int main(void)
++UK_TESTCASE(uk_libc_file_folder_tests, rlimit_open_files_tests)
+ {
+ 	static const long lim = 42;
+ 	static const int r = RLIMIT_NOFILE;
+@@ -15,19 +15,17 @@ int main(void)
+ 
+ 	rl.rlim_max = lim;
+ 	rl.rlim_cur = lim;
+-	if (setrlimit(r, &rl))
+-		t_error("setrlimit(%d, %ld) failed: %s\n", r, lim, strerror(errno));
+-	if (getrlimit(r, &rl))
+-		t_error("getrlimit(%d) failed: %s\n", r, strerror(errno));
+-	if (rl.rlim_max != lim || rl.rlim_cur != lim)
+-		t_error("getrlimit %d says cur=%ld,max=%ld after setting the limit to %ld\n", r, rl.rlim_cur, rl.rlim_max, lim);
++	UK_TEST_EXPECT_ZERO(setrlimit(r, &rl));
++	UK_TEST_EXPECT_ZERO(getrlimit(r, &rl));
++	UK_TEST_ASSERT(!(rl.rlim_max != lim || rl.rlim_cur != lim));
+ 
+ 	while((fd=dup(1)) != -1)
+ 		if (fd > maxfd) maxfd = fd;
+-	if (errno != EMFILE)
+-		t_error("dup(1) failed with %s, wanted EMFILE\n", strerror(errno));
+-	if (maxfd+1 != lim)
+-		t_error("more fds are open than rlimit allows: fd=%d, limit=%d\n", maxfd, lim);
+-
+-	return t_status;
++	UK_TEST_ASSERT(errno == EMFILE);
++	UK_TEST_ASSERT(maxfd + 1 == lim);
++	for(int i = 3; i <= maxfd; i++)
++		close(i);
++	rl.rlim_max = 1024;
++	rl.rlim_cur = 1024;
++	UK_TEST_EXPECT_ZERO(setrlimit(r, &rl));
+ }
+-- 
+2.25.1
+

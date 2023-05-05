@@ -1,0 +1,85 @@
+menuconfig LIBPYTHON3
+	bool "Python 3"
+	default n
+	select LIBNEWLIBC
+	select LIBNEWLIBC_WANT_IO_C99_FORMATS if LIBNEWLIBC
+	select LIBNEWLIBC_LINUX_ERRNO_EXTENSIONS if LIBNEWLIBC
+	select LIBUKDEBUG
+	select LIBUKALLOC
+	select LIBUKSCHED
+	select LIBPOSIX_SYSINFO
+	select LIBPOSIX_USER
+	select LIBPOSIX_LIBDL
+	select LIBSYSCALL_SHIM
+	select LIBVFSCORE
+	select LIBPTHREAD_EMBEDDED
+	select LIBPOSIX_SOCKET
+	select LIBPOSIX_EVENT
+	select LIBLWIP
+	select LWIP_DHCP
+	select LWIP_DNS
+	select LWIP_IPV6
+
+if LIBPYTHON3
+
+config LIBPYTHON3_PYTHONHOME
+	string "Python home directory"
+	default "/lib/python3.7"
+
+config LIBPYTHON3_PYTHONPATH
+	string "Python path"
+	default "/lib/python3.7"
+
+config LIBPYTHON3_TMPDIR
+	string "Temp directory location"
+	default "/tmp"
+
+config LIBPYTHON3_MAIN_FUNCTION
+	bool "Provide main function"
+	default n
+
+
+menuconfig LIBPYTHON3_EXTENSIONS
+	bool "Extensions"
+	default n
+
+if LIBPYTHON3_EXTENSIONS
+if LIBBZIP2
+config LIBPYTHON3_EXTENSION_BZIP2
+	bool "bzip2"
+	default y
+endif
+config LIBPYTHON3_EXTENSION_EXPAT
+	bool "Expat XML parser"
+	default y
+if LIBFFI
+config LIBPYTHON3_EXTENSION_CTYPES
+	bool "ctypes"
+	default y
+endif
+config LIBPYTHON3_EXTENSION_LIBMPDEC
+	bool "Decimal operations with libmpdec"
+	default y
+if LIBSQLITE
+config LIBPYTHON3_EXTENSION_SQLITE
+	bool "sqlite"
+	default y
+endif
+if LIBSSL
+config LIBPYTHON3_EXTENSION_SSL
+	bool "SSL"
+	default y
+endif
+if LIBUUID
+config LIBPYTHON3_EXTENSION_UUID
+	bool "UUID"
+	default y
+endif
+if LIBZLIB
+config LIBPYTHON3_EXTENSION_ZLIB
+	bool "zlib"
+	default y
+endif
+endif
+
+endif

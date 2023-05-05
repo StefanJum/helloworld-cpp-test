@@ -1,0 +1,39 @@
+From 0080908eb45e7d2cb1e7e3a41b55f7a2325ec83f Mon Sep 17 00:00:00 2001
+From: Florin Postolache <florin.postolache80@gmail.com>
+Date: Tue, 15 Nov 2022 22:45:49 +0200
+Subject: [PATCH] Modify scanf-nullbyte-char source to work with uktest
+
+Signed-off-by: Florin Postolache <florin.postolache80@gmail.com>
+---
+ src/regression/scanf-nullbyte-char.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
+
+diff --git a/src/regression/scanf-nullbyte-char.c b/src/regression/scanf-nullbyte-char.c
+index 48c6930..6751e6b 100644
+--- a/src/regression/scanf-nullbyte-char.c
++++ b/src/regression/scanf-nullbyte-char.c
+@@ -1,16 +1,14 @@
+ // commit: ef5507867b59d19f21437970e87b5d0415c07b2e 2013-06-22
+ // scanf should not append null byte after scanning %c
+ #include <stdio.h>
+-#include "test.h"
++#include <uk/test.h>
+ 
+-int main(void)
++UK_TESTCASE(uk_libc_file_folder_tests, scanf_nullbyte_char_tests)
+ {
+ 	char dst[] = { 'a', 'a' }; 
+ 	char src[] = { 'b', 'b', 0 };
+ 
+-	if (sscanf(src, "%c", dst) != 1)
+-		t_error("sscanf %%c failed\n");
+-	if (dst[1] != 'a')
+-		t_error("scanf clobbered the char buffer for %%c conversion\n");
+-	return t_status;
++
++	UK_TEST_ASSERTF(sscanf(src, "%c", dst) == 1, "sscanf(%s, %s, %s) == 1", src, "%c", dst);
++	UK_TEST_ASSERT(dst[1] == 'a');
+ }
+-- 
+2.25.1
+

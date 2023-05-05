@@ -1,0 +1,118 @@
+menuconfig LIBLIBCTEST
+	bool "Libc-test Unikraft library"
+	default n
+	select LIBUKTEST
+
+if LIBLIBCTEST
+
+	config LIBLIBCTEST_STRING_TESTS
+		bool "String tests"
+		default n
+
+	config LIBLIBCTEST_PTHREAD_TESTS
+		bool "Pthread tests"
+		default n
+		depends on !LIBNOLIBC
+
+	config LIBLIBCTEST_CONVERSION_TESTS
+		bool "Convertion tests"
+		default n
+		depends on !LIBNOLIBC
+	
+	config LIBLIBCTEST_REGEX_TESTS
+		bool "Regex tests"
+		default n
+		depends on !LIBNOLIBC
+
+	config LIBLIBCTEST_FILE_FOLDER_TESTS
+		bool "File operation tests"
+		default n
+		select LIBVFSCORE
+		select LIBVFSCORE_AUTOMOUNT_ROOTFS
+
+	config LIBLIBCTEST_TIME_TESTS
+		bool "Time functions tests"
+		default n
+		select LIBVFSCORE
+		select LIBVFSCORE_AUTOMOUNT_ROOTFS
+
+	config LIBLIBCTEST_NETWORK_TESTS
+		bool "Network functions tests"
+		default n
+		depends on !LIBNOLIBC
+
+	config LIBLIBCTEST_SORT_TESTS
+		bool "Sorting tests"
+		default n
+		depends on !LIBNOLIBC
+
+	config LIBLIBCTEST_STRUCTURE_SEARCH_TESTS
+		bool "Structure search tests"
+		default n
+		depends on !LIBNOLIBC
+
+	config LIBLIBCTEST_SEMAPHORE_TESTS
+		bool "Semaphore tests"
+		default n
+		depends on !LIBNOLIBC
+
+	config LIBLIBCTEST_RANDOM_TESTS
+		bool "Random tests"
+		default n
+		depends on !LIBNOLIBC
+
+	config LIBLIBCTEST_CRYPT_TESTS
+		bool "Crypt algorithms tests"
+		default n
+		depends on !LIBNOLIBC
+
+	config LIBLIBCTEST_ENV_TESTS
+		bool "Env tests"
+		default n
+		depends on !LIBNOLIBC
+
+	config LIBLIBCTEST_MALLOC_TESTS
+		bool "Malloc tests"
+		default n
+		depends on !LIBNOLIBC
+
+	config LIBLIBCTEST_TGMATH_TESTS
+		bool "Tgmath tests"
+		default n
+		depends on !LIBNOLIBC
+
+	config LIBLIBCTEST_ICONV_TESTS
+		bool "Iconv tests"
+		default n
+		depends on !LIBNOLIBC
+
+	config LIBLIBCTEST_UDIV_TESTS
+		bool "Udiv tests"
+		default n
+
+	config LIBLIBCTEST_MBFUNC_TESTS
+		bool "Mbfuncs tests"
+		default n
+		depends on !LIBNOLIBC
+
+	config LIBLIBCTEST_SETJMP_TESTS
+		bool "Setjmp tests"
+		default n
+		depends on !LIBNOLIBC
+
+	config LIBLIBCTEST_FPCLASSIFY_TESTS
+		bool "Fpclassify tests"
+		default n
+		depends on !LIBNOLIBC
+
+	config LIBLIBCTEST_POSIX_SPAWN_TESTS
+		bool "Posix spawn tests"
+		default n
+		depends on !LIBNOLIBC
+
+	config LIBLIBCTEST_ACCESS_TESTS
+		bool "Access tests"
+		default n
+		depends on !LIBNOLIBC
+
+endif

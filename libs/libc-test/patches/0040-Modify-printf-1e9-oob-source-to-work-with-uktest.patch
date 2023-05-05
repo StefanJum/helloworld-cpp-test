@@ -1,0 +1,49 @@
+From 75921f1764d70c309d9bf15f54b06cf4789bca30 Mon Sep 17 00:00:00 2001
+From: Florin Postolache <florin.postolache80@gmail.com>
+Date: Mon, 14 Nov 2022 23:23:59 +0200
+Subject: [PATCH] Modify printf-1e9-oob source to work with uktest
+
+Signed-off-by: Florin Postolache <florin.postolache80@gmail.com>
+---
+ src/regression/printf-1e9-oob.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/src/regression/printf-1e9-oob.c b/src/regression/printf-1e9-oob.c
+index d1d0b2e..1a5f51b 100644
+--- a/src/regression/printf-1e9-oob.c
++++ b/src/regression/printf-1e9-oob.c
+@@ -2,23 +2,23 @@
+ // float printf out-of-bounds access
+ #include <stdio.h>
+ #include <string.h>
+-#include "test.h"
++#include <uk/test.h>
+ 
+-static void t(const char *fmt, double d, const char *want)
++static int t(const char *fmt, double d, const char *want)
+ {
+ 	char buf[256];
+ 	int n = strlen(want);
+ 	int r = snprintf(buf, sizeof buf, fmt, d);
+ 	if (r != n || memcmp(buf, want, n+1) != 0)
+-		t_error("snprintf(\"%s\",%f) want %s got %s\n", fmt, d, want, buf);
++		return -1;
++	return 0;
+ }
+ 
+-int main()
++UK_TESTCASE(uk_libc_file_folder_tests, printf_1e9_oob_tests)
+ {
+ 	// fill stack with something
+-	t("%.1f", 123123123123123.0, "123123123123123.0");
++	UK_TEST_ASSERTF(t("%.1f", 123123123123123.0, "123123123123123.0") == 0, "snprintf(buf, sizeof buf, %s, %lf)", "%.1f", 123123123123123.0);
+ 	// test for out-of-bounds access
+-	t("%g", 999999999.0, "1e+09");
+-	t("%.3e", 999999999.75, "1.000e+09");
+-	return t_status;
++	UK_TEST_ASSERTF(t("%g", 999999999.0, "1e+09") == 0, "snprintf(buf, sizeof buf, %s, %lf)", "%g", 999999999.0);
++	UK_TEST_ASSERTF(t("%.3e", 999999999.75, "1.000e+09") == 0, "snprintf(buf, sizeof buf, %s, %lf)", "%.3e", 999999999.75);
+ }
+-- 
+2.25.1
+

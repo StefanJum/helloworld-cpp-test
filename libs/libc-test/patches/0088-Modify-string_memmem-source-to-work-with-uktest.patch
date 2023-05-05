@@ -1,0 +1,56 @@
+From 4660089c71629ef6006ebc8f8d23abefb5c04f08 Mon Sep 17 00:00:00 2001
+From: Florin Postolache <florin.postolache80@gmail.com>
+Date: Thu, 10 Nov 2022 08:32:41 +0200
+Subject: [PATCH] Modify string_memmem source to work with uktest
+
+Signed-off-by: Florin Postolache <florin.postolache80@gmail.com>
+---
+ src/functional/string_memmem.c | 16 +++++-----------
+ 1 file changed, 5 insertions(+), 11 deletions(-)
+
+diff --git a/src/functional/string_memmem.c b/src/functional/string_memmem.c
+index 608eadf..2ca66cd 100644
+--- a/src/functional/string_memmem.c
++++ b/src/functional/string_memmem.c
+@@ -2,26 +2,22 @@
+ #define _GNU_SOURCE 1
+ #endif
+ #include <string.h>
+-#include "test.h"
++#include <uk/test.h>
+ 
+ #define N(s, tail, sub) { \
+ 	char *p = s tail; \
+ 	char *q = memmem(p, strlen(s), sub, strlen(sub)); \
+-	if (q) \
+-		t_error("memmem("#s" "#tail", %d, "#sub", %d) returned str+%d, wanted 0\n",\
+-			strlen(s), strlen(sub), q-p); \
++	UK_TEST_ASSERTF((q == NULL), "Memmem returned NULL."); \
+ }
+ 
+ #define T(s, sub, n) { \
+ 	char *p = s; \
+ 	char *q = memmem(p, strlen(p), sub, strlen(sub)); \
+-	if (q == 0) \
+-		t_error("memmem(%s,%s) returned 0, wanted str+%d\n", #s, #sub, n); \
+-	else if (q - p != n) \
+-		t_error("memmem(%s,%s) returned str+%d, wanted str+%d\n", #s, #sub, q-p, n); \
++	UK_TEST_ASSERTF((q != NULL), "Memmem found a substring at address %p.", q); \
++	UK_TEST_ASSERTF((q - p == n), "Memmem returned the correct position."); \
+ }
+ 
+-int main(void)
++UK_TESTCASE(uk_libc_string_tests, string_memmem_tests)
+ {
+ 	N("","a", "a")
+ 	N("a","a", "aa")
+@@ -59,6 +55,4 @@ int main(void)
+ 	T("nanabanabanana", "anab", 1)
+ 	T("nanabanabanana", "banana", 8)
+ 	T("_ _\xff_ _", "_\xff_", 2)
+-
+-	return t_status;
+ }
+-- 
+2.25.1
+

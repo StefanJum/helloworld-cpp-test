@@ -1,0 +1,54 @@
+From 22c5c7481e0ac16e6e9a0909e97310be15280dc1 Mon Sep 17 00:00:00 2001
+From: Florin Postolache <florin.postolache80@gmail.com>
+Date: Thu, 17 Nov 2022 18:57:00 +0200
+Subject: [PATCH] Modify sscanf source to work with uktest
+
+Signed-off-by: Florin Postolache <florin.postolache80@gmail.com>
+---
+ src/functional/sscanf.c | 21 +++++++++------------
+ 1 file changed, 9 insertions(+), 12 deletions(-)
+
+diff --git a/src/functional/sscanf.c b/src/functional/sscanf.c
+index 4480109..d9b4b1b 100644
+--- a/src/functional/sscanf.c
++++ b/src/functional/sscanf.c
+@@ -1,21 +1,19 @@
+ #include <stdio.h>
+ #include <string.h>
+ #include <limits.h>
+-#include "test.h"
++#include <uk/test.h>
+ 
+-#define TEST(r, f, x, m) ( \
+-	((r) = (f)) == (x) || \
+-	(t_error("%s failed (" m ")\n", #f, r, x), 0) )
++#define TEST(r, f, x, m) UK_TEST_ASSERT((r = f) == x); \
++	uk_test_printf(m, r, x); \
++	uk_test_printf("\n") 
+ 
+-#define TEST_S(s, x, m) ( \
+-	!strcmp((s),(x)) || \
+-	(t_error("[%s] != [%s] (%s)\n", s, x, m), 0) )
++#define TEST_S(s, x, m) UK_TEST_ASSERTF(strcmp((s),(x)) == 0, "strcmp(%s, %s) == 0", s, x)
+ 
+-#define TEST_F(x) ( \
+-	TEST(i, sscanf(# x, "%lf", &d), 1, "got %d fields, expected %d"), \
+-	TEST(t, d, (double)x, "%g != %g") )
++#define TEST_F(x) \
++	TEST(i, sscanf(# x, "%lf", &d), 1, "got %d fields, expected %d"); \
++	TEST(t, d, (double)x, "%g != %g")
+ 
+-int main(void)
++UK_TESTCASE(uk_libc_file_folder_tests, sscanf_tests)
+ {
+ 	int i;
+ 	char a[100], b[100];
+@@ -82,5 +80,4 @@ int main(void)
+ 
+ 	TEST(i, sscanf("10e", "%lf", &d), 0, "got %d fields, expected no match (%d)");
+ 	TEST(i, sscanf("", "%lf\n", &d), -1, "got %d fields, expected input failure (%d)");
+-	return t_status;
+ }
+-- 
+2.25.1
+

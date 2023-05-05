@@ -1,0 +1,29 @@
+---
+specification: '0.5'
+name: helloworld-cpp
+unikraft:
+  version: stable
+  kconfig:
+    - CONFIG_LIBPOSIX_SYSINFO=y
+    - CONFIG_LIBUKSIGNAL=y
+    - CONFIG_LIBNEWLIBC=y
+targets:
+  - architecture: x86_64
+    platform: linuxu
+  - architecture: x86_64
+    platform: kvm
+  - architecture: x86_64
+    platform: xen
+  - architecture: arm64
+    platform: kvm
+libraries:
+  libunwind:
+    version: stable
+  compiler-rt:
+    version: stable
+  libcxx:
+    version: stable
+  libcxxabi:
+    version: stable
+  musl:
+    version: stable
